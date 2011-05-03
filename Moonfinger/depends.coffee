@@ -1,0 +1,1 @@
+enyo.depends "source/application.js", "css/application.css"
