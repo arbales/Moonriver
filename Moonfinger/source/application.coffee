@@ -46,7 +46,7 @@ enyo.kind {
       }
       {
         name: "sendTask", kind: "WebService",                       
-        method: 'post'
+        method: 'put'
         url: "http://ec2-50-17-136-168.compute-1.amazonaws.com/tasks.json", 
         handleAs: 'json'
         headers: {
@@ -54,17 +54,30 @@ enyo.kind {
          'Content-Type': 'application/json',
          'Cookie': "_midnight_session=BAh7CEkiEF9jc3JmX3Rva2VuBjoGRUZJIjFKS3hvMVY1Ri84eG9SRkRGYlNNbEVCSlRWcUFhOG91R0Fmdm9GQ1V2R2tvPQY7AEZJIhl3YXJkZW4udXNlci51c2VyLmtleQY7AFRbCEkiCVVzZXIGOwBGWwZpA575HEkiCmR1bW15BjsARkkiD3Nlc3Npb25faWQGOwBGIiVhOGI1N2RlNDZlZjBmYjA2N2FiOGIwOWFjNzA0YmVhYg%3D%3D--db1cfdcfb86708d79a6b13d6ab9b16704f3e57ad",
         }
+        onSuccess: "receiveUpdates"
       }
     ] 
   viewTask: (sender) ->
     enyo.windows.activate("TaskWindow", "task.html");
-    
+
+  receiveUpdates: (sender, response) ->
+    console.log response
   checkboxClicked: (sender) ->
-    # task_id = sender.getTaskID()
+    task_id = sender.getTaskID()
     index = sender.getIndex()  
     @data[index].status = if sender.checked then "Completed" else "Open"    
+    @data[name] = "hello"
+    @data[index].assignee_user_id = @data[index].task_assignees[0].assignee_id
+    @data[index].task_assignees_set = [{
+      assignee_id: @data[index].task_assignees[0].assignee_id
+      user_id: @data[index].task_assignees[0].assignee_id
+      completed: true
+    }]
+    delete @data[index]['task_assignees']
+    @.$.sendTask.url = "http://ec2-50-17-136-168.compute-1.amazonaws.com/tasks/#{task_id}"
+    payload = enyo.json.stringify {task: @data[index]}
+    @.$.sendTask.call(payload)   
     @.$.list.reset()
-    #@.$.sendTask.call({task: @data[index]})   
     
   listSetupRow: (inSender, index) ->
     record = this.data[index]
