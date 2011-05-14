@@ -18,7 +18,7 @@
     }
   });
   enyo.kind({
-    name: "Moonfinger",
+    name: "TaskList",
     kind: enyo.VFlexBox,
     components: [
       {
@@ -30,7 +30,7 @@
         components: [
           {
             kind: "Image",
-            src: "header-image.png"
+            src: "images/header-image.png"
           }, {
             content: "",
             flex: 1
@@ -91,23 +91,43 @@
       }, {
         name: "sendTask",
         kind: "WebService",
-        method: 'post',
+        method: 'put',
         url: "http://ec2-50-17-136-168.compute-1.amazonaws.com/tasks.json",
         handleAs: 'json',
         headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/json',
           'Cookie': "_midnight_session=BAh7CEkiEF9jc3JmX3Rva2VuBjoGRUZJIjFKS3hvMVY1Ri84eG9SRkRGYlNNbEVCSlRWcUFhOG91R0Fmdm9GQ1V2R2tvPQY7AEZJIhl3YXJkZW4udXNlci51c2VyLmtleQY7AFRbCEkiCVVzZXIGOwBGWwZpA575HEkiCmR1bW15BjsARkkiD3Nlc3Npb25faWQGOwBGIiVhOGI1N2RlNDZlZjBmYjA2N2FiOGIwOWFjNzA0YmVhYg%3D%3D--db1cfdcfb86708d79a6b13d6ab9b16704f3e57ad"
-        }
+        },
+        onSuccess: "receiveUpdates"
       }
     ],
     viewTask: function(sender) {
       return enyo.windows.activate("TaskWindow", "task.html");
     },
+    receiveUpdates: function(sender, response) {
+      return console.log(response);
+    },
     checkboxClicked: function(sender) {
-      var index;
+      var index, payload, task_id;
+      task_id = sender.getTaskID();
       index = sender.getIndex();
       this.data[index].status = sender.checked ? "Completed" : "Open";
+      this.data[name] = "hello";
+      this.data[index].assignee_user_id = this.data[index].task_assignees[0].assignee_id;
+      this.data[index].task_assignees_set = [
+        {
+          assignee_id: this.data[index].task_assignees[0].assignee_id,
+          user_id: this.data[index].task_assignees[0].assignee_id,
+          completed: true
+        }
+      ];
+      delete this.data[index]['task_assignees'];
+      this.$.sendTask.url = "http://ec2-50-17-136-168.compute-1.amazonaws.com/tasks/" + task_id;
+      payload = enyo.json.stringify({
+        task: this.data[index]
+      });
+      this.$.sendTask.call(payload);
       return this.$.list.reset();
     },
     listSetupRow: function(inSender, index) {

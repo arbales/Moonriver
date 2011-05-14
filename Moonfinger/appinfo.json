@@ -1,8 +1,10 @@
 {
-  "id": "com.417east.moonfinger",
+  "id": "com.417east.manymoon",
   "version": "0.0.1",
   "vendor": "417east",
   "type": "web",
   "main": "index.html",
-  "title": "Moonfinger" 
+  "title": "Manymoon",
+  "icon": "images/icon.png",
+  "miniicon": "images/notification-icon.png" 
 }
