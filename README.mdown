@@ -1,1 +1,35 @@
-PALM
+# Moonriver
+
+                                    ___
+                 _____________ * .'`  _\
+        ....-''``'._ _________) /  (o/       *
+                ,_  '-.___)    |     _\           *
+                  `'-._)_)      \  '==.    *
+        -----'``"-,__(__)    *   '.____\       ~*
+
+
+## Building Moonriver
+Moonriver requires the Palm webOS 3.0 SDK and Enyo frameworks. Download the Enyo framework and place it a `framework` subdirectory (along side this repo's contents)
+
+You also need Node and CoffeeScript.
+
+The SDK is required to build IPK (application) files and for on-device testing. If you don't have those tools, open `index.html` in **Safari** or Chrome with the local AJAX enabled (chrome is stupid and disables this, even for files with a local origin. real dumb. This is likely because this extra "security" creates a nerdgasm for someone at goog).    
+
+### For local dev...
+
+    cd /path/to/moonriver
+    coffee -c -w .
+
+### Build it for the device/emulator...
+Also, you also need, Thor.
+
+    thor moon:build
+
+This creates a `com.417east.manymoon_[version]_all.ipk` file which you can then upload to the virtualizer or to a device.
+
+    thor moon:install
+    
+This will install the IPK to the device (or if not present) the emulator. No certs, memberships, or bullshit required. This ain't iPhone. If you don't want to Thor, you can manually compile the directory with `palm-package` and install with `palm-install`.
+
+
+
